@@ -18,8 +18,8 @@ namespace Tennis
             // if someone wins
             var isPLayer1Winner = player1.HasAtLeast4Points() && (player1.Point - player2.Point) > 1;
             if (isPLayer1Winner) return TennisConstant.WIN_FOR_PLAYER1;
-            var isPLayer2Winer = player2.HasAtLeast4Points() && (player2.Point - player1.Point) > 1;
-            if (isPLayer2Winer) return TennisConstant.WIN_FOR_PLAYER2;
+            var isPLayer2Winner = player2.HasAtLeast4Points() && (player2.Point - player1.Point) > 1;
+            if (isPLayer2Winner) return TennisConstant.WIN_FOR_PLAYER2;
 
             // if nobody wins
             var pointDifference = GetPointDifference();
