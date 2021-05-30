@@ -10,6 +10,7 @@ namespace Tennis
         public const string ONE_POINT = "Fifteen";
         public const string TWO_POINTS = "Thirty";
         public const string THREE_POINTS = "Forty";
+        public const string UNKNOWN_POINTS = "Unknown";
         public const string TO = "-";
         public const string ALL = "-All";
         public const string DEUCE = "Deuce";

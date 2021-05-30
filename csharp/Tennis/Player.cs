@@ -9,6 +9,14 @@ namespace Tennis
         public string Name { get; set; }
         public int Point { get; set; }
 
+        private static readonly IDictionary<int, string> tennisScoreDictionary = new Dictionary<int, string>
+        {
+            [0] = TennisConstant.ZERO_POINT,
+            [1] = TennisConstant.ONE_POINT,
+            [2] = TennisConstant.TWO_POINTS,
+            [3] = TennisConstant.THREE_POINTS
+        };
+
         public Player(string name)
         {
             Name = name;
@@ -29,24 +37,14 @@ namespace Tennis
             return Point > 3;
         }
 
+        public bool HasAtLeast2PointsMoreThan(Player concurrent)
+        {
+            return Point - concurrent.Point > 1;
+        }
+
         public string GetTennisScore()
         {
-            var tennisScore = "";
-            switch (Point) {
-                case 0: 
-                    tennisScore = TennisConstant.ZERO_POINT;
-                    break;
-                case 1:
-                    tennisScore = TennisConstant.ONE_POINT;
-                    break;
-                case 2:
-                    tennisScore = TennisConstant.TWO_POINTS;
-                    break;
-                case 3:
-                    tennisScore = TennisConstant.THREE_POINTS;
-                    break;
-            }
-            return tennisScore;
+            return tennisScoreDictionary.ContainsKey(Point) ? tennisScoreDictionary[Point] : TennisConstant.UNKNOWN_POINTS;
         }
     }
 }

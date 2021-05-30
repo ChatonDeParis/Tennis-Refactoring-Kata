@@ -16,31 +16,33 @@ namespace Tennis
         public string GetScore()
         {
             // if someone wins
-            var isPLayer1Winner = player1.HasAtLeast4Points() && (player1.Point - player2.Point) > 1;
+            var isPLayer1Winner = player1.HasAtLeast4Points() && player1.HasAtLeast2PointsMoreThan(player2);
             if (isPLayer1Winner) return TennisConstant.WIN_FOR_PLAYER1;
-            var isPLayer2Winner = player2.HasAtLeast4Points() && (player2.Point - player1.Point) > 1;
+            var isPLayer2Winner = player2.HasAtLeast4Points() && player2.HasAtLeast2PointsMoreThan(player1);
             if (isPLayer2Winner) return TennisConstant.WIN_FOR_PLAYER2;
 
             // if nobody wins
-            var pointDifference = GetPointDifference();
+            var pointDifference = GetPointDifferenceOfTwoPlayers();
             var bothHasAtLeast3Points = player1.HasAtLeast3Points() && player2.HasAtLeast3Points();
-            return GetScoreWithoutWiner(pointDifference, bothHasAtLeast3Points);
+            return GetScoreWhenNobodyWins(pointDifference, bothHasAtLeast3Points);
         }
 
+
+
         // Get the point difference of the two players 
-        public PointDifference GetPointDifference()
+        public PointDifference GetPointDifferenceOfTwoPlayers()
         {
-            var p1 = player1.Point;
-            var p2 = player2.Point;
-            if (p1 == p2) return PointDifference.EQUALS;
-            if (p1 > p2) return PointDifference.PLAYER1_HAS_MORE_POINTS;
+            var pointOfPlayer1 = player1.Point;
+            var pointOfPlayer2 = player2.Point;
+            if (pointOfPlayer1 == pointOfPlayer2) return PointDifference.EQUALS;
+            if (pointOfPlayer1 > pointOfPlayer2) return PointDifference.PLAYER1_HAS_MORE_POINTS;
             return PointDifference.PLAYER2_HAS_MORE_POINTS;
         }
 
         // Get the score result when threre is no winer
-        public string GetScoreWithoutWiner(PointDifference pointDelta, bool bothHasAtLeast3Points)
+        public string GetScoreWhenNobodyWins(PointDifference pointDifference, bool bothHasAtLeast3Points)
         {
-            return (pointDelta, bothHasAtLeast3Points) switch
+            return (pointDifference, bothHasAtLeast3Points) switch
             {
                 (PointDifference.EQUALS, false) => player1.GetTennisScore() + TennisConstant.ALL,
                 (PointDifference.EQUALS, true) => TennisConstant.DEUCE,
