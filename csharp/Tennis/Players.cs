@@ -34,5 +34,15 @@ namespace Tennis
         {
             return Player1.Point < Player2.Point;
         }
+
+        public void Player1Score()
+        {
+            Player1.Score();
+        }
+
+        public void Player2Score()
+        {
+            Player2.Score();
+        }
     }
 }
