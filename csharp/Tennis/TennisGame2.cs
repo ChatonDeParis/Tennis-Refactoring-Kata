@@ -1,64 +1,44 @@
 using System;
+using System.Collections.Generic;
 
 namespace Tennis
 {
     public class TennisGame2 : ITennisGame
     {
-        private Player player1;
-        private Player player2;
+        private Players players;
 
         public TennisGame2(string player1Name, string player2Name)
         {
-            this.player1 = new Player(player1Name);
-            this.player2 = new Player(player2Name);
+            var player1 = new Player(player1Name);
+            var player2 = new Player(player2Name);
+            players = new Players(player1, player2);
         }
 
         public string GetScore()
         {
-            // if someone wins
-            var isPLayer1Winner = player1.HasAtLeast4Points() && player1.HasAtLeast2PointsMoreThan(player2);
-            if (isPLayer1Winner) return TennisConstant.WIN_FOR_PLAYER1;
-            var isPLayer2Winner = player2.HasAtLeast4Points() && player2.HasAtLeast2PointsMoreThan(player1);
-            if (isPLayer2Winner) return TennisConstant.WIN_FOR_PLAYER2;
+            Predicate<Players> isPLayer1Winner = delegate (Players players) { return players.Player1.HasAtLeast4Points() && players.Player1.HasAtLeast2PointsMoreThan(players.Player2); };
+            Predicate<Players> isPLayer2Winner = delegate (Players players) { return players.Player2.HasAtLeast4Points() && players.Player2.HasAtLeast2PointsMoreThan(players.Player1); };
+            Predicate<Players> isEqualsWithLessThan3Points = delegate (Players players) { return players.HasSamePoints() && !players.BothHasAtLeast3Points(); };
+            Predicate<Players> isEqualsWithAtLeast3Points = delegate (Players players) { return players.HasSamePoints() && players.BothHasAtLeast3Points(); };
+            Predicate<Players> isPlayer1InAdvantage = delegate (Players players) { return players.Player1HasMorePoints() && players.BothHasAtLeast3Points(); };
+            Predicate<Players> isPlayer2InAdvantage = delegate (Players players) { return players.Player2HasMorePoints() && players.BothHasAtLeast3Points(); };
 
-            // if nobody wins
-            var pointDifference = GetPointDifferenceOfTwoPlayers();
-            var bothHasAtLeast3Points = player1.HasAtLeast3Points() && player2.HasAtLeast3Points();
-            return GetScoreWhenNobodyWins(pointDifference, bothHasAtLeast3Points);
+
+            if (isPLayer1Winner(players)) return TennisConstant.WIN_FOR_PLAYER1;
+            if (isPLayer2Winner(players)) return TennisConstant.WIN_FOR_PLAYER2;
+            if (isEqualsWithAtLeast3Points(players)) return TennisConstant.DEUCE; 
+            if (isEqualsWithLessThan3Points(players)) return players.Player1.GetTennisScore() + TennisConstant.ALL;
+            if (isPlayer1InAdvantage(players)) return TennisConstant.ADVANTAGE_PLAYER_1;
+            if (isPlayer2InAdvantage(players)) return TennisConstant.ADVANTAGE_PLAYER_2;
+            return players.Player1.GetTennisScore() + TennisConstant.TO + players.Player2.GetTennisScore();
         }
-
-
-
-        // Get the point difference of the two players 
-        public PointDifference GetPointDifferenceOfTwoPlayers()
-        {
-            var pointOfPlayer1 = player1.Point;
-            var pointOfPlayer2 = player2.Point;
-            if (pointOfPlayer1 == pointOfPlayer2) return PointDifference.EQUALS;
-            if (pointOfPlayer1 > pointOfPlayer2) return PointDifference.PLAYER1_HAS_MORE_POINTS;
-            return PointDifference.PLAYER2_HAS_MORE_POINTS;
-        }
-
-        // Get the score result when threre is no winer
-        public string GetScoreWhenNobodyWins(PointDifference pointDifference, bool bothHasAtLeast3Points)
-        {
-            return (pointDifference, bothHasAtLeast3Points) switch
-            {
-                (PointDifference.EQUALS, false) => player1.GetTennisScore() + TennisConstant.ALL,
-                (PointDifference.EQUALS, true) => TennisConstant.DEUCE,
-                (PointDifference.PLAYER1_HAS_MORE_POINTS, true) => TennisConstant.ADVANTAGE_PLAYER_1,
-                (PointDifference.PLAYER2_HAS_MORE_POINTS, true) => TennisConstant.ADVANTAGE_PLAYER_2,
-                _ => player1.GetTennisScore() + TennisConstant.TO + player2.GetTennisScore()
-            };
-        }
-
 
         public void WonPoint(string player)
         {
             if (player == "player1")
-                player1.Score();
+                players.Player1.Score();
             else
-                player2.Score();
+                players.Player2.Score();
         }
 
     }
